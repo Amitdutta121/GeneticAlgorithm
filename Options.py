@@ -1,0 +1,9 @@
+class Options:
+    CHROMOSOME_LENGTH = 50
+    POPULATION_SIZE = 400
+    MAX_GENERATION = 400
+    P_CROSS = 0.667
+    P_MUT = 0.001
+    CHC_LAMDA = 2
+    RANDOM_SEED = 200
+# 67
