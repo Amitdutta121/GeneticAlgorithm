@@ -6,4 +6,6 @@ class Options:
     P_MUT = 0.001
     CHC_LAMDA = 2
     RANDOM_SEED = 200
+    EVALUATOR = None
+    TOTAL_RUNS = 5
 # 67

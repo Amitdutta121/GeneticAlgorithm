@@ -1,7 +1,10 @@
+from Options import Options
+
+
 class Evaluator:
 
     def evaluate(self, chromosome):
-        return self.maxOnes(chromosome)
+        return Options.EVALUATOR(chromosome)
 
     def dejongFunction2(self, chromosome):
 

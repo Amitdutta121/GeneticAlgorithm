@@ -17,8 +17,9 @@ class GeneticAlgorithm:
         self.average_fitness = []
         self.max_fitness = []
 
+
     def simple_genetic_algorithm(self):
-        random.seed(Options.RANDOM_SEED)
+        # random.seed(Options.RANDOM_SEED)
         self.clear_fitness()
         population = self.initialize_population(Options.POPULATION_SIZE)
         generation = 0
@@ -65,6 +66,7 @@ class GeneticAlgorithm:
         print(best_individual.get_genes())
         ones_count = Evaluator().evaluate(best_individual.get_genes())
         print(f"Number of 1's: {ones_count}")
+        return self.average_fitness, self.max_fitness
 
     def print_population(self, population):
         print("=====================================")
@@ -72,16 +74,21 @@ class GeneticAlgorithm:
             print(f"Individual {i}: {population.individuals[i].get_genes()}")
         print("=====================================")
 
-    def plot_average_fitness_and_max_fitness(self):
+    def plot_average_fitness_and_max_fitness(self, algo_type="simple"):
         plt.plot(self.average_fitness, label="Average Fitness")
         plt.plot(self.max_fitness, label="Max Fitness")
         plt.xlabel("Generation")
         plt.ylabel("Fitness")
+        # set title
+        if algo_type == "simple":
+            plt.title("Average Fitness and Max Fitness (Simple Genetic Algorithm)")
+        else:
+            plt.title("Average Fitness and Max Fitness (CHC Genetic Algorithm)")
         plt.legend()
         plt.show()
 
     def chc_genetic_algorithm(self):
-        random.seed(Options.RANDOM_SEED)
+        # random.seed(Options.RANDOM_SEED)
         self.clear_fitness()
         current_population = self.initialize_population(Options.POPULATION_SIZE * Options.CHC_LAMDA)
         generation = 0
@@ -143,14 +150,51 @@ class GeneticAlgorithm:
         return population
 
 
-# Include your Population, Individual, Options, Evaluator, and RandomGenerator classes here.
+
+def plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, algo_type="SGA", evaluator="deJongFunction1"):
+    avg_fitness = [sum(x) / len(x) for x in zip(*runs_and_avg_fitness)]
+    max_fitness = [sum(x) / len(x) for x in zip(*runs_and_max_fitness)]
+    plt.plot(avg_fitness, label="Average Fitness")
+    plt.plot(max_fitness, label="Max Fitness")
+    plt.xlabel("Generation")
+    plt.ylabel("Fitness")
+    # set title
+    if algo_type == "SGA":
+        plt.title(f"Average and Max Fitness (Simple Genetic Algorithm) for {evaluator}")
+    else:
+        plt.title(f"Average and Max Fitness (CHC Genetic Algorithm) for {evaluator}")
+    plt.legend()
+    plt.show()
 
 if __name__ == "__main__":
     ga = GeneticAlgorithm()
-    ga.simple_genetic_algorithm()
-    ga.plot_average_fitness_and_max_fitness()
 
-    Options.P_MUT = 0.05
-    Options.P_CROSS = 0.99
-    ga.chc_genetic_algorithm()
-    ga.plot_average_fitness_and_max_fitness()
+    runs_and_avg_fitness = list()
+    runs_and_max_fitness = list()
+
+    for i in range(Options.TOTAL_RUNS):
+        Options.EVALUATOR = Evaluator().deJongFunction1
+        average_fitness, max_fitness = ga.simple_genetic_algorithm()
+        runs_and_avg_fitness.append(average_fitness)
+        runs_and_max_fitness.append(max_fitness)
+    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, algo_type="SGA", evaluator="deJongFunction1")
+
+    runs_and_avg_fitness = list()
+    runs_and_max_fitness = list()
+
+    for i in range(Options.TOTAL_RUNS):
+        Options.EVALUATOR = Evaluator().dejongFunction2
+        average_fitness, max_fitness = ga.simple_genetic_algorithm()
+        runs_and_avg_fitness.append(average_fitness)
+        runs_and_max_fitness.append(max_fitness)
+    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, algo_type="SGA", evaluator="deJongFunction2")
+
+
+
+    # ga.plot_average_fitness_and_max_fitness()
+    #
+    # Options.P_MUT = 0.05
+    # Options.P_CROSS = 0.99
+    # Options.EVALUATOR = Evaluator().maxOnes
+    # ga.chc_genetic_algorithm()
+    # ga.plot_average_fitness_and_max_fitness("CHC")
