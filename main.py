@@ -139,6 +139,7 @@ class GeneticAlgorithm:
         print(best_individual.get_genes())
         result = Evaluator().evaluate(best_individual.get_genes())
         print(f"Best Result: {result}")
+        return self.average_fitness, self.max_fitness
 
     def initialize_population(self, size):
         population = Population(size)
@@ -169,32 +170,36 @@ def plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, algo_type="SGA",
 if __name__ == "__main__":
     ga = GeneticAlgorithm()
 
-    runs_and_avg_fitness = list()
-    runs_and_max_fitness = list()
-
-    for i in range(Options.TOTAL_RUNS):
-        Options.EVALUATOR = Evaluator().deJongFunction1
-        average_fitness, max_fitness = ga.simple_genetic_algorithm()
-        runs_and_avg_fitness.append(average_fitness)
-        runs_and_max_fitness.append(max_fitness)
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, algo_type="SGA", evaluator="deJongFunction1")
-
-    runs_and_avg_fitness = list()
-    runs_and_max_fitness = list()
-
-    for i in range(Options.TOTAL_RUNS):
-        Options.EVALUATOR = Evaluator().dejongFunction2
-        average_fitness, max_fitness = ga.simple_genetic_algorithm()
-        runs_and_avg_fitness.append(average_fitness)
-        runs_and_max_fitness.append(max_fitness)
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, algo_type="SGA", evaluator="deJongFunction2")
-
-
-
-    # ga.plot_average_fitness_and_max_fitness()
+    # runs_and_avg_fitness = list()
+    # runs_and_max_fitness = list()
     #
-    # Options.P_MUT = 0.05
-    # Options.P_CROSS = 0.99
-    # Options.EVALUATOR = Evaluator().maxOnes
-    # ga.chc_genetic_algorithm()
-    # ga.plot_average_fitness_and_max_fitness("CHC")
+    # for i in range(Options.TOTAL_RUNS):
+    #     Options.EVALUATOR = Evaluator().deJongFunction1
+    #     average_fitness, max_fitness = ga.simple_genetic_algorithm()
+    #     runs_and_avg_fitness.append(average_fitness)
+    #     runs_and_max_fitness.append(max_fitness)
+    # plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, algo_type="SGA", evaluator="deJongFunction1")
+    #
+    # runs_and_avg_fitness = list()
+    # runs_and_max_fitness = list()
+    #
+    # for i in range(Options.TOTAL_RUNS):
+    #     Options.EVALUATOR = Evaluator().dejongFunction2
+    #     average_fitness, max_fitness = ga.simple_genetic_algorithm()
+    #     runs_and_avg_fitness.append(average_fitness)
+    #     runs_and_max_fitness.append(max_fitness)
+    # plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, algo_type="SGA", evaluator="deJongFunction2")
+    #
+    runs_and_avg_fitness = list()
+    runs_and_max_fitness = list()
+
+    for i in range(Options.TOTAL_RUNS):
+        Options.EVALUATOR = Evaluator().step_function
+        Options.CHROMOSOME_LENGTH = 9*5
+        Options.P_MUT = 0.05
+        Options.P_CROSS = 0.99
+        average_fitness, max_fitness = ga.chc_genetic_algorithm()
+        runs_and_avg_fitness.append(average_fitness)
+        runs_and_max_fitness.append(max_fitness)
+    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, algo_type="SGA", evaluator="Step Function")
+
