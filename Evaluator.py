@@ -52,7 +52,7 @@ class Evaluator:
             decodedValues.append(self.map_10bit_binary_to_value(chromosome, fromIndex, toIndex, -1.28, 1.28, 9))
 
         sum = 30
-        n = 5
+        n = 1
 
         for i in range(n):
             sum += (i + 1) * (decodedValues[i] ** 4)
@@ -79,11 +79,11 @@ class Evaluator:
             toIndex = (i + 1) * 10
             decodedValues.append(self.map_10bit_binary_to_value(chromosome, fromIndex, toIndex, -5.12, 5.12, 10))
 
-        sum = 6 * 5
+        sum = 0
 
         for i in range(len(decodedValues)):
-            sum += abs(decodedValues[i])
-        return 1 / (sum + 1)
+            sum += int(decodedValues[i])
+        return 30 / (sum + 30)
 
     def dejongFunction2(self, chromosome):
 
@@ -94,13 +94,12 @@ class Evaluator:
         for i in range(partLength):
             fromIndex = i * 10
             toIndex = (i + 1) * 10
-            decodedValues.append(self.map_10bit_binary_to_value(chromosome, fromIndex, toIndex, -5.11, 5.12, 10))
+            decodedValues.append(self.map_10bit_binary_to_value(chromosome, fromIndex, toIndex, -2.048, 2.048, 10))
         # print(decodedValues)
 
         sum = 0
 
-        for i in range(len(decodedValues) - 1):
-            sum += 100 * ((decodedValues[i + 1] - decodedValues[i] ** 2) ** 2) + ((decodedValues[i] - 1) ** 2)
+        sum += 100 * ((decodedValues[1] - decodedValues[0] ** 2) ** 2) + ((decodedValues[0] - 1) ** 2)
 
         if sum < 0:
             print("======================GOING NEGATIVE======================")
