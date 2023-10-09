@@ -150,6 +150,7 @@ class GeneticAlgorithm:
         print(f"Best individual after {Options.MAX_GENERATION} generations:")
         print(best_individual.get_genes())
         result = Evaluator().evaluate(best_individual.get_genes())
+        print(Evaluator().decode_floor_planning(best_individual.get_genes()));
         print(f"Best Result: {result}")
         return self.average_fitness, self.max_fitness,self.min_fitness, self.objective
 
@@ -201,36 +202,10 @@ if __name__ == "__main__":
 
     for i in range(Options.TOTAL_RUNS):
         # random.seed(Options.RANDOM_SEED)
-        Options.EVALUATOR = Evaluator().deJongFunction1
-        # Options.P_MUT = 0.05
-        # Options.P_CROSS = 0.9
-        Options.CHROMOSOME_LENGTH = 50
-        Options.OBJECTIVE = Objective.dejongReverse
-        average_fitness, max_fitness, min_fitness, obj = ga.simple_genetic_algorithm()
-        runs_and_avg_fitness.append(average_fitness)
-        runs_and_max_fitness.append(max_fitness)
-        runs_and_objective.append(obj)
-        runs_and_min_fitness.append(min_fitness)
-
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="SGA",
-                    evaluator="DeJongFunction1")
-
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="SGA",
-                    evaluator="DeJongFunction1", withObjective=True)
-
-    runs_and_avg_fitness = list()
-    runs_and_max_fitness = list()
-    runs_and_min_fitness = list()
-    runs_and_objective = list()
-
-    for i in range(Options.TOTAL_RUNS):
-        # random.seed(Options.RANDOM_SEED)
-        Options.EVALUATOR = Evaluator().deJongFunction1
-        Options.P_MUT = 0.05
-        Options.P_CROSS = 0.95
-        Options.CHROMOSOME_LENGTH = 50
+        Options.EVALUATOR = Evaluator().sushilEvaluation
+        Options.P_MUT = 0.4
+        Options.P_CROSS = 0.9
+        Options.CHROMOSOME_LENGTH = 40
         Options.OBJECTIVE = Objective.dejongReverse
         average_fitness, max_fitness, min_fitness, obj = ga.chc_genetic_algorithm()
         runs_and_avg_fitness.append(average_fitness)
@@ -240,210 +215,13 @@ if __name__ == "__main__":
 
     plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
                     algo_type="CHC",
-                    evaluator="DeJongFunction1")
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="CHC",
-                    evaluator="DeJongFunction1", withObjective=True)
-
-    runs_and_avg_fitness = list()
-    runs_and_max_fitness = list()
-    runs_and_min_fitness = list()
-    runs_and_objective = list()
-
-    for i in range(Options.TOTAL_RUNS):
-        # random.seed(Options.RANDOM_SEED)
-        Options.EVALUATOR = Evaluator().dejongFunction2
-        # Options.P_MUT = 0.05
-        # Options.P_CROSS = 0.9
-        Options.CHROMOSOME_LENGTH = 20
-        Options.OBJECTIVE = Objective.dejongReverse
-        average_fitness, max_fitness, min_fitness, obj = ga.simple_genetic_algorithm()
-        runs_and_avg_fitness.append(average_fitness)
-        runs_and_max_fitness.append(max_fitness)
-        runs_and_objective.append(obj)
-        runs_and_min_fitness.append(min_fitness)
-
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="SGA",
-                    evaluator="DeJongFunction2")
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="SGA",
-                    evaluator="DeJongFunction2", withObjective=True)
-
-    runs_and_avg_fitness = list()
-    runs_and_max_fitness = list()
-    runs_and_min_fitness = list()
-    runs_and_objective = list()
-
-    for i in range(Options.TOTAL_RUNS):
-        # random.seed(Options.RANDOM_SEED)
-        Options.EVALUATOR = Evaluator().dejongFunction2
-        Options.P_MUT = 0.05
-        Options.P_CROSS = 0.95
-        Options.CHROMOSOME_LENGTH = 20
-        Options.OBJECTIVE = Objective.dejongReverse
-        average_fitness, max_fitness, min_fitness, obj = ga.chc_genetic_algorithm()
-        runs_and_avg_fitness.append(average_fitness)
-        runs_and_max_fitness.append(max_fitness)
-        runs_and_objective.append(obj)
-        runs_and_min_fitness.append(min_fitness)
+                    evaluator="floorPlanning")
 
     plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
                     algo_type="CHC",
-                    evaluator="DeJongFunction2")
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="CHC",
-                    evaluator="DeJongFunction2", withObjective=True)
+                    evaluator="floorPlanning", withObjective=True)
 
-    runs_and_avg_fitness = list()
-    runs_and_max_fitness = list()
-    runs_and_min_fitness = list()
-    runs_and_objective = list()
 
-    for i in range(Options.TOTAL_RUNS):
-        # random.seed(Options.RANDOM_SEED)
-        Options.EVALUATOR = Evaluator().step_function
-        # Options.P_MUT = 0.05
-        # Options.P_CROSS = 0.9
-        Options.CHROMOSOME_LENGTH = 50
-        Options.OBJECTIVE = Objective.stepdejongReverse
-        average_fitness, max_fitness, min_fitness, obj = ga.simple_genetic_algorithm()
-        runs_and_avg_fitness.append(average_fitness)
-        runs_and_max_fitness.append(max_fitness)
-        runs_and_objective.append(obj)
-        runs_and_min_fitness.append(min_fitness)
-
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="SGA",
-                    evaluator="DeJongFunction3")
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="SGA",
-                    evaluator="DeJongFunction3", withObjective=True)
-
-    runs_and_avg_fitness = list()
-    runs_and_max_fitness = list()
-    runs_and_min_fitness = list()
-    runs_and_objective = list()
-
-    for i in range(Options.TOTAL_RUNS):
-        # random.seed(Options.RANDOM_SEED)
-        Options.EVALUATOR = Evaluator().step_function
-        Options.P_MUT = 0.05
-        Options.P_CROSS = 0.95
-        Options.CHROMOSOME_LENGTH = 50
-        Options.OBJECTIVE = Objective.stepdejongReverse
-        average_fitness, max_fitness, min_fitness, obj = ga.chc_genetic_algorithm()
-        runs_and_avg_fitness.append(average_fitness)
-        runs_and_max_fitness.append(max_fitness)
-        runs_and_objective.append(obj)
-        runs_and_min_fitness.append(min_fitness)
-
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="CHC",
-                    evaluator="DeJongFunction3")
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="CHC",
-                    evaluator="DeJongFunction3", withObjective=True)
-
-    runs_and_avg_fitness = list()
-    runs_and_max_fitness = list()
-    runs_and_min_fitness = list()
-    runs_and_objective = list()
-
-    for i in range(Options.TOTAL_RUNS):
-        # random.seed(Options.RANDOM_SEED)
-        Options.EVALUATOR = Evaluator().quartic
-        # Options.P_MUT = 0.05
-        # Options.P_CROSS = 0.9
-        Options.CHROMOSOME_LENGTH = 9
-        Options.OBJECTIVE = Objective.dejongReverse
-        average_fitness, max_fitness, min_fitness, obj = ga.simple_genetic_algorithm()
-        runs_and_avg_fitness.append(average_fitness)
-        runs_and_max_fitness.append(max_fitness)
-        runs_and_objective.append(obj)
-        runs_and_min_fitness.append(min_fitness)
-
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="SGA",
-                    evaluator="DeJongFunction4")
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="SGA",
-                    evaluator="DeJongFunction4", withObjective=True)
-
-    runs_and_avg_fitness = list()
-    runs_and_max_fitness = list()
-    runs_and_min_fitness = list()
-    runs_and_objective = list()
-
-    for i in range(Options.TOTAL_RUNS):
-        # random.seed(Options.RANDOM_SEED)
-        Options.EVALUATOR = Evaluator().quartic
-        Options.P_MUT = 0.05
-        Options.P_CROSS = 0.95
-        Options.CHROMOSOME_LENGTH = 9
-        Options.OBJECTIVE = Objective.dejongReverse
-        average_fitness, max_fitness, min_fitness, obj = ga.chc_genetic_algorithm()
-        runs_and_avg_fitness.append(average_fitness)
-        runs_and_max_fitness.append(max_fitness)
-        runs_and_objective.append(obj)
-        runs_and_min_fitness.append(min_fitness)
-
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="CHC",
-                    evaluator="DeJongFunction4")
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="CHC",
-                    evaluator="DeJongFunction4", withObjective=True)
-
-    runs_and_avg_fitness = list()
-    runs_and_max_fitness = list()
-    runs_and_min_fitness = list()
-    runs_and_objective = list()
-
-    for i in range(Options.TOTAL_RUNS):
-        # random.seed(Options.RANDOM_SEED)
-        Options.EVALUATOR = Evaluator().function_5
-        # Options.P_MUT = 0.05
-        # Options.P_CROSS = 0.9
-        Options.CHROMOSOME_LENGTH = 13
-        Options.OBJECTIVE = Objective.dejongReverse
-        average_fitness, max_fitness, min_fitness, obj = ga.simple_genetic_algorithm()
-        runs_and_avg_fitness.append(average_fitness)
-        runs_and_max_fitness.append(max_fitness)
-        runs_and_objective.append(obj)
-        runs_and_min_fitness.append(min_fitness)
-
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="SGA",
-                    evaluator="DeJongFunction5")
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="SGA",
-                    evaluator="DeJongFunction5", withObjective=True)
-
-    runs_and_avg_fitness = list()
-    runs_and_max_fitness = list()
-    runs_and_min_fitness = list()
-    runs_and_objective = list()
-
-    for i in range(Options.TOTAL_RUNS):
-        # random.seed(Options.RANDOM_SEED)
-        Options.EVALUATOR = Evaluator().function_5
-        Options.P_MUT = 0.05
-        Options.P_CROSS = 0.95
-        Options.CHROMOSOME_LENGTH = 13
-        Options.OBJECTIVE = Objective.dejongReverse
-        average_fitness, max_fitness, min_fitness, obj = ga.chc_genetic_algorithm()
-        runs_and_avg_fitness.append(average_fitness)
-        runs_and_max_fitness.append(max_fitness)
-        runs_and_objective.append(obj)
-        runs_and_min_fitness.append(min_fitness)
-
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="CHC",
-                    evaluator="DeJongFunction5")
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="CHC",
-                    evaluator="DeJongFunction5", withObjective=True)
 
 
 
