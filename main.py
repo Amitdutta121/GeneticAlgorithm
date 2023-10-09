@@ -74,7 +74,7 @@ class GeneticAlgorithm:
         print(best_individual.get_genes())
         ones_count = Evaluator().evaluate(best_individual.get_genes())
         print(f"Number of 1's: {ones_count}")
-        return self.average_fitness, self.max_fitness,self.min_fitness, self.objective
+        return self.average_fitness, self.max_fitness, self.min_fitness, self.objective
 
     def print_population(self, population):
         print("=====================================")
@@ -152,7 +152,7 @@ class GeneticAlgorithm:
         result = Evaluator().evaluate(best_individual.get_genes())
         print(Evaluator().decode_floor_planning(best_individual.get_genes()));
         print(f"Best Result: {result}")
-        return self.average_fitness, self.max_fitness,self.min_fitness, self.objective
+        return self.average_fitness, self.max_fitness, self.min_fitness, self.objective
 
     def initialize_population(self, size):
         population = Population(size)
@@ -164,7 +164,8 @@ class GeneticAlgorithm:
         return population
 
 
-def plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness,runs_and_min_fitness, runs_and_objective, algo_type="SGA",
+def plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
+                    algo_type="SGA",
                     evaluator="deJongFunction1", withObjective=False):
     avg_fitness = [sum(x) / len(x) for x in zip(*runs_and_avg_fitness)]
     max_fitness = [sum(x) / len(x) for x in zip(*runs_and_max_fitness)]
@@ -202,10 +203,10 @@ if __name__ == "__main__":
 
     for i in range(Options.TOTAL_RUNS):
         # random.seed(Options.RANDOM_SEED)
-        Options.EVALUATOR = Evaluator().sushilEvaluation
-        Options.P_MUT = 0.4
+        Options.EVALUATOR = Evaluator().floorPlanning
+        Options.P_MUT = 0.6
         Options.P_CROSS = 0.9
-        Options.CHROMOSOME_LENGTH = 40
+        Options.CHROMOSOME_LENGTH = 40*1
         Options.OBJECTIVE = Objective.dejongReverse
         average_fitness, max_fitness, min_fitness, obj = ga.chc_genetic_algorithm()
         runs_and_avg_fitness.append(average_fitness)
@@ -217,12 +218,8 @@ if __name__ == "__main__":
                     algo_type="CHC",
                     evaluator="floorPlanning")
 
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="CHC",
-                    evaluator="floorPlanning", withObjective=True)
-
-
-
-
+    # plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
+    #                 algo_type="CHC",
+    #                 evaluator="floorPlanning", withObjective=True)
 
 

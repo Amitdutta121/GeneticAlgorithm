@@ -23,7 +23,7 @@ class Evaluator:
 
 
     def sushilEvaluation(self, chromosome):
-        num_bits_per = 1
+        num_bits_per = 4
         livingLength = chromosome[0:4 * num_bits_per]
         livingHeight = chromosome[4 * num_bits_per:8 * num_bits_per]
         kitchenLength = chromosome[8 * num_bits_per:12 * num_bits_per]
@@ -54,7 +54,7 @@ class Evaluator:
 
     def decode_floor_planning(self, chromosome):
 
-        num_bits_per = 3
+        num_bits_per = 1
         livingLength = chromosome[0:4 * num_bits_per]
         livingHeight = chromosome[4 * num_bits_per:8 * num_bits_per]
         kitchenLength = chromosome[8 * num_bits_per:12 * num_bits_per]
@@ -67,17 +67,17 @@ class Evaluator:
         bed3Length = chromosome[31 * num_bits_per:35 * num_bits_per]
         bed3Height = chromosome[35 * num_bits_per:39 * num_bits_per]
 
-        living_length = self.map_10bit_binary_to_value_without_index(chromosome, 8, 20, 4 * num_bits_per)
-        living_width = self.map_10bit_binary_to_value_without_index(chromosome, 8, 20, 4 * num_bits_per)
-        kitchen_length = self.map_10bit_binary_to_value_without_index(chromosome, 6, 18, 4 * num_bits_per)
-        kitchen_width = self.map_10bit_binary_to_value_without_index(chromosome, 6, 18, 4 * num_bits_per)
-        hall_width = self.map_10bit_binary_to_value_without_index(chromosome, 3.5, 6, 2 * num_bits_per)
-        berdroom1_length = self.map_10bit_binary_to_value_without_index(chromosome, 10, 17, 3 * num_bits_per)
-        berdroom1_width = self.map_10bit_binary_to_value_without_index(chromosome, 10, 17, 3 * num_bits_per)
-        berdroom2_length = self.map_10bit_binary_to_value_without_index(chromosome, 9, 20, 4 * num_bits_per)
-        berdroom2_width = self.map_10bit_binary_to_value_without_index(chromosome, 9, 20, 4 * num_bits_per)
-        berdroom3_length = self.map_10bit_binary_to_value_without_index(chromosome, 8, 18, 4 * num_bits_per)
-        berdroom3_width = self.map_10bit_binary_to_value_without_index(chromosome, 8, 18, 4 * num_bits_per)
+        living_length = self.map_10bit_binary_to_value_without_index(livingLength, 8, 20, 4 * num_bits_per)
+        living_width = self.map_10bit_binary_to_value_without_index(livingHeight, 8, 20, 4 * num_bits_per)
+        kitchen_length = self.map_10bit_binary_to_value_without_index(kitchenLength, 6, 18, 4 * num_bits_per)
+        kitchen_width = self.map_10bit_binary_to_value_without_index(kitchenHeight, 6, 18, 4 * num_bits_per)
+        hall_width = self.map_10bit_binary_to_value_without_index(hallWidth, 3.5, 6, 2 * num_bits_per)
+        berdroom1_length = self.map_10bit_binary_to_value_without_index(bed1Length, 10, 17, 3 * num_bits_per)
+        berdroom1_width = self.map_10bit_binary_to_value_without_index(bed1Height, 10, 17, 3 * num_bits_per)
+        berdroom2_length = self.map_10bit_binary_to_value_without_index(bed2Length, 9, 20, 4 * num_bits_per)
+        berdroom2_width = self.map_10bit_binary_to_value_without_index(bed2Height, 9, 20, 4 * num_bits_per)
+        berdroom3_length = self.map_10bit_binary_to_value_without_index(bed3Length, 8, 18, 4 * num_bits_per)
+        berdroom3_width = self.map_10bit_binary_to_value_without_index(bed3Height, 8, 18, 4 * num_bits_per)
 
         # Calculate the areas for each room
         living_area = living_length * living_width
@@ -95,20 +95,24 @@ class Evaluator:
         # Calculate the total area including the doorway space
         total_area_with_doorway = total_area
 
-        print("Living Room: ", living_length, "x", living_width, " = ", living_area)
-        print("Kitchen: ", kitchen_length, "x", kitchen_width, " = ", kitchen_area)
+        living_ratio = living_length / living_width
+        bed1_ratio = berdroom1_length / berdroom1_width
+        bed2_ratio = berdroom2_length / berdroom2_width
+        bed3_ratio = berdroom3_length / berdroom3_width
+
+        print("Living Room: ", living_length, "x", living_width, " = ", living_area, "Proportion: ", living_ratio)
+        print("Kitchen: ", kitchen_length, "x", kitchen_width, " = ", kitchen_area,)
         print("Hall: ", 5.5, "x", hall_width, " = ", hall_area)
-        print("Bedroom 1: ", berdroom1_length, "x", berdroom1_width, " = ", berdroom1_area)
-        print("Bedroom 2: ", berdroom2_length, "x", berdroom2_width, " = ", berdroom2_area)
-        print("Bedroom 3: ", berdroom3_length, "x", berdroom3_width, " = ", berdroom3_area)
+        print("Bedroom 1: ", berdroom1_length, "x", berdroom1_width, " = ", berdroom1_area, "Proportion: ", bed1_ratio)
+        print("Bedroom 2: ", berdroom2_length, "x", berdroom2_width, " = ", berdroom2_area, "Proportion: ", bed2_ratio)
+        print("Bedroom 3: ", berdroom3_length, "x", berdroom3_width, " = ", berdroom3_area, "Proportion: ", bed3_ratio)
         print("Total Area: ", total_area)
         print("COST: ", total_area_with_doorway)
 
         return total_area_with_doorway
 
     def floorPlanning(self, chromosome):
-
-        num_bits_per = 3
+        num_bits_per = 1
         livingLength = chromosome[0:4*num_bits_per]
         livingHeight = chromosome[4*num_bits_per:8*num_bits_per]
         kitchenLength = chromosome[8*num_bits_per:12*num_bits_per]
@@ -121,17 +125,17 @@ class Evaluator:
         bed3Length = chromosome[31*num_bits_per:35*num_bits_per]
         bed3Height = chromosome[35*num_bits_per:39*num_bits_per]
 
-        living_length = self.map_10bit_binary_to_value_without_index(chromosome,  8, 20, 4*num_bits_per)
-        living_width = self.map_10bit_binary_to_value_without_index(chromosome,  8, 20, 4*num_bits_per)
-        kitchen_length = self.map_10bit_binary_to_value_without_index(chromosome, 6, 18, 4*num_bits_per)
-        kitchen_width = self.map_10bit_binary_to_value_without_index(chromosome,  6, 18, 4*num_bits_per)
-        hall_width = self.map_10bit_binary_to_value_without_index(chromosome, 3.5, 6, 2*num_bits_per)
-        berdroom1_length = self.map_10bit_binary_to_value_without_index(chromosome,  10, 17, 3*num_bits_per)
-        berdroom1_width = self.map_10bit_binary_to_value_without_index(chromosome,  10, 17, 3*num_bits_per)
-        berdroom2_length = self.map_10bit_binary_to_value_without_index(chromosome,  9, 20, 4*num_bits_per)
-        berdroom2_width = self.map_10bit_binary_to_value_without_index(chromosome,  9, 20, 4*num_bits_per)
-        berdroom3_length = self.map_10bit_binary_to_value_without_index(chromosome,  8, 18, 4*num_bits_per)
-        berdroom3_width = self.map_10bit_binary_to_value_without_index(chromosome, 8, 18, 4*num_bits_per)
+        living_length = self.map_10bit_binary_to_value_without_index(livingLength,  8, 20, 4*num_bits_per)
+        living_width = self.map_10bit_binary_to_value_without_index(livingHeight,  8, 20, 4*num_bits_per)
+        kitchen_length = self.map_10bit_binary_to_value_without_index(kitchenLength, 6, 18, 4*num_bits_per)
+        kitchen_width = self.map_10bit_binary_to_value_without_index(kitchenHeight,  6, 18, 4*num_bits_per)
+        hall_width = self.map_10bit_binary_to_value_without_index(hallWidth, 3.5, 6, 2*num_bits_per)
+        berdroom1_length = self.map_10bit_binary_to_value_without_index(bed1Length,  10, 17, 3*num_bits_per)
+        berdroom1_width = self.map_10bit_binary_to_value_without_index(bed1Height,  10, 17, 3*num_bits_per)
+        berdroom2_length = self.map_10bit_binary_to_value_without_index(bed2Length,  9, 20, 4*num_bits_per)
+        berdroom2_width = self.map_10bit_binary_to_value_without_index(bed2Height,  9, 20, 4*num_bits_per)
+        berdroom3_length = self.map_10bit_binary_to_value_without_index(bed3Length,  8, 18, 4*num_bits_per)
+        berdroom3_width = self.map_10bit_binary_to_value_without_index(bed3Height, 8, 18, 4*num_bits_per)
 
         # Define the minimum and maximum areas for each room
         living_area_min = 120
@@ -174,38 +178,38 @@ class Evaluator:
         bed3_ratio = berdroom3_length / berdroom3_width
 
         # if living_ratio != living_proportion:
-        #     cost = cost + 100
+        #     cost = cost + 30000
         # if bed1_ratio != bed1_proportion:
-        #     cost = cost + 100
+        #     cost = cost + 30000
         # if bed2_ratio != bed1_proportion:
-        #     cost = cost + 100
+        #     cost = cost + 30000
         # if bed3_ratio != bed1_proportion:
-        #     cost = cost + 100
-        #
-        # if living_area < living_area_min:
-        #     cost = cost + 100
-        # if living_area > living_area_max:
-        #     cost = cost + 100
-        # if kitchen_area < kitchen_area_min:
-        #     cost = cost + 100
-        # if kitchen_area > kitchen_area_max:
-        #     cost = cost + 100
-        # if hall_area < hall_area_min:
-        #     cost = cost + 100
-        # if hall_area > hall_area_max:
-        #     cost = cost + 100
-        # if berdroom1_area < berdroom_area_min:
-        #     cost = cost + 100
-        # if berdroom1_area > berdroom_area_max:
-        #     cost = cost + 100
-        # if berdroom2_area < berdroom_area_min:
-        #     cost = cost + 100
-        # if berdroom2_area > berdroom_area_max:
-        #     cost = cost + 100
-        # if berdroom3_area < berdroom_area_min:
-        #     cost = cost + 100
-        # if berdroom3_area > berdroom_area_max:
-        #     cost = cost + 100
+        #     cost = cost + 30000
+
+        if living_area < living_area_min:
+            cost = cost + 100
+        if living_area > living_area_max:
+            cost = cost + 100
+        if kitchen_area < kitchen_area_min:
+            cost = cost + 100
+        if kitchen_area > kitchen_area_max:
+            cost = cost + 100
+        if hall_area < hall_area_min:
+            cost = cost + 100
+        if hall_area > hall_area_max:
+            cost = cost + 100
+        if berdroom1_area < berdroom_area_min:
+            cost = cost + 100
+        if berdroom1_area > berdroom_area_max:
+            cost = cost + 100
+        if berdroom2_area < berdroom_area_min:
+            cost = cost + 100
+        if berdroom2_area > berdroom_area_max:
+            cost = cost + 100
+        if berdroom3_area < berdroom_area_min:
+            cost = cost + 100
+        if berdroom3_area > berdroom_area_max:
+            cost = cost + 100
 
         # Calculate penalties based on the difference from desired proportions
         proportion_penalty = (
@@ -216,26 +220,27 @@ class Evaluator:
         )
 
         # Calculate penalties based on the deviation from desired area ranges
-        area_penalty = (
-                max(0, (living_area - living_area_max) ** 2) +
-                max(0, (kitchen_area - kitchen_area_max) ** 2) +
-                max(0, (hall_area - hall_area_max) ** 2) +
-                max(0, (berdroom1_area - berdroom_area_max) ** 2) +
-                max(0, (berdroom2_area - berdroom_area_max) ** 2) +
-                max(0, (berdroom3_area - berdroom_area_max) ** 2) +
-                max(0, (living_area_min - living_area) ** 2) +
-                max(0, (kitchen_area_min - kitchen_area) ** 2) +
-                max(0, (hall_area_min - hall_area) ** 2) +
-                max(0, (berdroom_area_min - berdroom1_area) ** 2) +
-                max(0, (berdroom_area_min - berdroom2_area) ** 2) +
-                max(0, (berdroom_area_min - berdroom3_area) ** 2)
-        )
+        # area_penalty = (
+        #         abs((living_area - living_area_max) ** 2) +
+        #         abs((kitchen_area - kitchen_area_max) ** 2) +
+        #         abs((hall_area - hall_area_max) ** 2) +
+        #         abs((berdroom1_area - berdroom_area_max) ** 2) +
+        #         abs((berdroom2_area - berdroom_area_max) ** 2) +
+        #         abs((berdroom3_area - berdroom_area_max) ** 2) +
+        #         abs((living_area_min - living_area) ** 2) +
+        #         abs((kitchen_area_min - kitchen_area) ** 2) +
+        #         abs((hall_area_min - hall_area) ** 2) +
+        #         abs((berdroom_area_min - berdroom1_area) ** 2) +
+        #         abs((berdroom_area_min - berdroom2_area) ** 2) +
+        #         abs((berdroom_area_min - berdroom3_area) ** 2)
+        # )
 
         # Calculate the cost based on the total area
         cost = total_area_with_doorway + 5.5 * 8.5 * 2  # Assuming this is a fixed cost
 
         # Add proportion and area penalties to the cost
-        cost +=  proportion_penalty + area_penalty
+        # cost +=  proportion_penalty + area_penalty
+        cost +=  proportion_penalty
 
         reward = 1 / (cost + 1)
 
