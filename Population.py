@@ -40,13 +40,6 @@ class Population:
         # Fallback to the last individual
         return self.individuals[-1]
 
-    def mutate_population(self):
-        for i in range(len(self.individuals)):
-            genes = self.individuals[i].get_genes()
-            for j in range(len(genes)):
-                if random.random() < Options.P_MUT:
-                    genes[j] = 1 - genes[j]  # Flip the bit
-
     def get_individual(self, index):
         return self.individuals[index]
 

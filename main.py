@@ -7,7 +7,24 @@ from Options import Options
 from Population import Population
 import matplotlib.pyplot as plt
 
-
+# Assuming you have a function to read TSP data from a file
+def read_tsp_data(file_name):
+    cities = []
+    with open(file_name, 'r') as file:
+        read_coordinates = False
+        for line in file:
+            if "NODE_COORD_SECTION" in line:
+                read_coordinates = True
+                continue
+            elif "EOF" in line:
+                break
+            if read_coordinates:
+                parts = line.strip().split()
+                city_id = int(parts[0])
+                x = float(parts[1])
+                y = float(parts[2])
+                cities.append((city_id, x, y))
+    return cities
 class GeneticAlgorithm:
 
     def __init__(self):
@@ -15,6 +32,7 @@ class GeneticAlgorithm:
         self.max_fitness = []
         self.min_fitness = []
         self.objective = []
+        self.tsp_data = read_tsp_data("berlin52.tsp")
 
     def clear_fitness(self):
         self.average_fitness = []
@@ -95,11 +113,13 @@ class GeneticAlgorithm:
         plt.legend()
         plt.show()
 
-    def chc_genetic_algorithm(self):
+    def chc_genetic_algorithm(self, max_generations_without_improvement=10):
         # random.seed(Options.RANDOM_SEED)
         self.clear_fitness()
         current_population = self.initialize_population(Options.POPULATION_SIZE * Options.CHC_LAMDA)
         generation = 0
+        prev_avg_fitness = None
+        generations_without_improvement = 0
 
         while generation < Options.MAX_GENERATION:
             fitness_values = current_population.calculate_fitness()
@@ -118,6 +138,16 @@ class GeneticAlgorithm:
             self.objective.append(obj)
             self.min_fitness.append(min_f)
 
+            if prev_avg_fitness is not None and avg_fitness <= prev_avg_fitness:
+                generations_without_improvement += 1
+                if generations_without_improvement >= max_generations_without_improvement:
+                    print(f"Terminating due to lack of improvement for {generations_without_improvement} generations.")
+                    break
+            else:
+                generations_without_improvement = 0
+
+            prev_avg_fitness = avg_fitness
+
             for i in range(0, Options.POPULATION_SIZE, 2):
                 parent1 = current_population.roulette_wheel_selection(fitness_values)
                 parent2 = current_population.roulette_wheel_selection(fitness_values)
@@ -126,7 +156,7 @@ class GeneticAlgorithm:
                 children1 = None
                 children2 = None
                 if random.random() < Options.P_CROSS:  # Perform crossover with probability
-                    children = parent1.one_point_crossover(parent2)
+                    children = parent1.pmx_crossover(parent2)
                     children1 = children[0]
                     children2 = children[1]
                     new_population.add_individual(children[0])
@@ -149,8 +179,8 @@ class GeneticAlgorithm:
         best_individual = current_population.get_best_individual()
         print(f"Best individual after {Options.MAX_GENERATION} generations:")
         print(best_individual.get_genes())
+        print(f"Objective: {Options.OBJECTIVE(Evaluator().evaluate(best_individual.get_genes()))}")
         result = Evaluator().evaluate(best_individual.get_genes())
-        print(Evaluator().decode_floor_planning(best_individual.get_genes()));
         print(f"Best Result: {result}")
         return self.average_fitness, self.max_fitness,self.min_fitness, self.objective
 
@@ -158,7 +188,9 @@ class GeneticAlgorithm:
         population = Population(size)
 
         for i in range(size):
-            genes = [random.choice((0, 1)) for _ in range(Options.CHROMOSOME_LENGTH)]
+            # Randomly shuffle the city order
+            random.shuffle(self.tsp_data)
+            genes = [city[0] for city in self.tsp_data]  # Extract city IDs in shuffled order
             individual = Individual(genes)
             population.add_individual(individual)
         return population
@@ -202,16 +234,17 @@ if __name__ == "__main__":
 
     for i in range(Options.TOTAL_RUNS):
         # random.seed(Options.RANDOM_SEED)
-        Options.EVALUATOR = Evaluator().sushilEvaluation
-        Options.P_MUT = 0.4
+        Options.EVALUATOR = Evaluator().tsp_fitness
+        Options.P_MUT = 0.9
         Options.P_CROSS = 0.9
-        Options.CHROMOSOME_LENGTH = 40
+        Options.CHROMOSOME_LENGTH = 52
         Options.OBJECTIVE = Objective.dejongReverse
         average_fitness, max_fitness, min_fitness, obj = ga.chc_genetic_algorithm()
         runs_and_avg_fitness.append(average_fitness)
         runs_and_max_fitness.append(max_fitness)
         runs_and_objective.append(obj)
         runs_and_min_fitness.append(min_fitness)
+
 
     plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
                     algo_type="CHC",

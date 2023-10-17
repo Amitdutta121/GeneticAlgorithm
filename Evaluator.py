@@ -5,378 +5,52 @@ from Options import Options
 
 
 class Evaluator:
-
-    def calculate_cost(self, room_type, area):
-        # Define cost constants for each room type
-        cost_constants = {
-            'living': 1.0,  # Cost per unit area for living room
-            'kitchen': 2.0,  # Cost per unit area for kitchen (twice the cost)
-            'bedroom': 1.0,  # Cost per unit area for bedroom
-            'hall': 1.5,  # Cost per unit area for hall
-            'bathroom': 2.0,  # Cost per unit area for bathroom (twice the cost)
-        }
-
-        # Calculate the cost for the given room type
-        cost = cost_constants[room_type] * area
-
-        return cost
-
-
-    def sushilEvaluation(self, chromosome):
-        num_bits_per = 1
-        livingLength = chromosome[0:4 * num_bits_per]
-        livingHeight = chromosome[4 * num_bits_per:8 * num_bits_per]
-        kitchenLength = chromosome[8 * num_bits_per:12 * num_bits_per]
-        kitchenHeight = chromosome[12 * num_bits_per:15 * num_bits_per]
-        hallWidth = chromosome[15 * num_bits_per:17 * num_bits_per]
-        bed1Length = chromosome[17 * num_bits_per:20 * num_bits_per]
-        bed1Height = chromosome[20 * num_bits_per:23 * num_bits_per]
-        bed2Length = chromosome[23 * num_bits_per:27 * num_bits_per]
-        bed2Height = chromosome[27 * num_bits_per:31 * num_bits_per]
-        bed3Length = chromosome[31 * num_bits_per:35 * num_bits_per]
-        bed3Height = chromosome[35 * num_bits_per:39 * num_bits_per]
-
-        living_length = self.map_10bit_binary_to_value_without_index(chromosome, 8, 20, 4 * num_bits_per)
-        living_width = self.map_10bit_binary_to_value_without_index(chromosome, 8, 20, 4 * num_bits_per)
-        kitchen_length = self.map_10bit_binary_to_value_without_index(chromosome, 6, 18, 4 * num_bits_per)
-        kitchen_width = self.map_10bit_binary_to_value_without_index(chromosome, 6, 18, 4 * num_bits_per)
-        hall_width = self.map_10bit_binary_to_value_without_index(chromosome, 3.5, 6, 2 * num_bits_per)
-        berdroom1_length = self.map_10bit_binary_to_value_without_index(chromosome, 10, 17, 3 * num_bits_per)
-        berdroom1_width = self.map_10bit_binary_to_value_without_index(chromosome, 10, 17, 3 * num_bits_per)
-        berdroom2_length = self.map_10bit_binary_to_value_without_index(chromosome, 9, 20, 4 * num_bits_per)
-        berdroom2_width = self.map_10bit_binary_to_value_without_index(chromosome, 9, 20, 4 * num_bits_per)
-        berdroom3_length = self.map_10bit_binary_to_value_without_index(chromosome, 8, 18, 4 * num_bits_per)
-        berdroom3_width = self.map_10bit_binary_to_value_without_index(chromosome, 8, 18, 4 * num_bits_per)
-
-
-        reward = living_length*living_width + 2*kitchen_length*kitchen_width + 93.5*(46.75) + 5.5*(living_width-8.5)+ kitchen_width*berdroom1_width+ berdroom2_length* berdroom2_width+ berdroom2_length*berdroom3_width
-        return 1/(reward+1)
-
-    def decode_floor_planning(self, chromosome):
-
-        num_bits_per = 3
-        livingLength = chromosome[0:4 * num_bits_per]
-        livingHeight = chromosome[4 * num_bits_per:8 * num_bits_per]
-        kitchenLength = chromosome[8 * num_bits_per:12 * num_bits_per]
-        kitchenHeight = chromosome[12 * num_bits_per:15 * num_bits_per]
-        hallWidth = chromosome[15 * num_bits_per:17 * num_bits_per]
-        bed1Length = chromosome[17 * num_bits_per:20 * num_bits_per]
-        bed1Height = chromosome[20 * num_bits_per:23 * num_bits_per]
-        bed2Length = chromosome[23 * num_bits_per:27 * num_bits_per]
-        bed2Height = chromosome[27 * num_bits_per:31 * num_bits_per]
-        bed3Length = chromosome[31 * num_bits_per:35 * num_bits_per]
-        bed3Height = chromosome[35 * num_bits_per:39 * num_bits_per]
-
-        living_length = self.map_10bit_binary_to_value_without_index(chromosome, 8, 20, 4 * num_bits_per)
-        living_width = self.map_10bit_binary_to_value_without_index(chromosome, 8, 20, 4 * num_bits_per)
-        kitchen_length = self.map_10bit_binary_to_value_without_index(chromosome, 6, 18, 4 * num_bits_per)
-        kitchen_width = self.map_10bit_binary_to_value_without_index(chromosome, 6, 18, 4 * num_bits_per)
-        hall_width = self.map_10bit_binary_to_value_without_index(chromosome, 3.5, 6, 2 * num_bits_per)
-        berdroom1_length = self.map_10bit_binary_to_value_without_index(chromosome, 10, 17, 3 * num_bits_per)
-        berdroom1_width = self.map_10bit_binary_to_value_without_index(chromosome, 10, 17, 3 * num_bits_per)
-        berdroom2_length = self.map_10bit_binary_to_value_without_index(chromosome, 9, 20, 4 * num_bits_per)
-        berdroom2_width = self.map_10bit_binary_to_value_without_index(chromosome, 9, 20, 4 * num_bits_per)
-        berdroom3_length = self.map_10bit_binary_to_value_without_index(chromosome, 8, 18, 4 * num_bits_per)
-        berdroom3_width = self.map_10bit_binary_to_value_without_index(chromosome, 8, 18, 4 * num_bits_per)
-
-        # Calculate the areas for each room
-        living_area = living_length * living_width
-        kitchen_area = kitchen_length * kitchen_width
-        hall_area = 5.5 * hall_width
-        berdroom1_area = berdroom1_length * berdroom1_width
-        berdroom2_area = berdroom2_length * berdroom2_width
-        berdroom3_area = berdroom3_length * berdroom3_width
-
-        # Calculate the total area of the rooms
-        total_area = living_area + 2 * kitchen_area + hall_area + berdroom1_area + berdroom2_area + berdroom3_area + 5.5 * 8.5 * 2
-
-        # Calculate the required space for the doorway between bed2 and bed3
-
-        # Calculate the total area including the doorway space
-        total_area_with_doorway = total_area
-
-        print("Living Room: ", living_length, "x", living_width, " = ", living_area)
-        print("Kitchen: ", kitchen_length, "x", kitchen_width, " = ", kitchen_area)
-        print("Hall: ", 5.5, "x", hall_width, " = ", hall_area)
-        print("Bedroom 1: ", berdroom1_length, "x", berdroom1_width, " = ", berdroom1_area)
-        print("Bedroom 2: ", berdroom2_length, "x", berdroom2_width, " = ", berdroom2_area)
-        print("Bedroom 3: ", berdroom3_length, "x", berdroom3_width, " = ", berdroom3_area)
-        print("Total Area: ", total_area)
-        print("COST: ", total_area_with_doorway)
-
-        return total_area_with_doorway
-
-    def floorPlanning(self, chromosome):
-
-        num_bits_per = 3
-        livingLength = chromosome[0:4*num_bits_per]
-        livingHeight = chromosome[4*num_bits_per:8*num_bits_per]
-        kitchenLength = chromosome[8*num_bits_per:12*num_bits_per]
-        kitchenHeight = chromosome[12*num_bits_per:15*num_bits_per]
-        hallWidth = chromosome[15*num_bits_per:17*num_bits_per]
-        bed1Length = chromosome[17*num_bits_per:20*num_bits_per]
-        bed1Height = chromosome[20*num_bits_per:23*num_bits_per]
-        bed2Length = chromosome[23*num_bits_per:27*num_bits_per]
-        bed2Height = chromosome[27*num_bits_per:31*num_bits_per]
-        bed3Length = chromosome[31*num_bits_per:35*num_bits_per]
-        bed3Height = chromosome[35*num_bits_per:39*num_bits_per]
-
-        living_length = self.map_10bit_binary_to_value_without_index(chromosome,  8, 20, 4*num_bits_per)
-        living_width = self.map_10bit_binary_to_value_without_index(chromosome,  8, 20, 4*num_bits_per)
-        kitchen_length = self.map_10bit_binary_to_value_without_index(chromosome, 6, 18, 4*num_bits_per)
-        kitchen_width = self.map_10bit_binary_to_value_without_index(chromosome,  6, 18, 4*num_bits_per)
-        hall_width = self.map_10bit_binary_to_value_without_index(chromosome, 3.5, 6, 2*num_bits_per)
-        berdroom1_length = self.map_10bit_binary_to_value_without_index(chromosome,  10, 17, 3*num_bits_per)
-        berdroom1_width = self.map_10bit_binary_to_value_without_index(chromosome,  10, 17, 3*num_bits_per)
-        berdroom2_length = self.map_10bit_binary_to_value_without_index(chromosome,  9, 20, 4*num_bits_per)
-        berdroom2_width = self.map_10bit_binary_to_value_without_index(chromosome,  9, 20, 4*num_bits_per)
-        berdroom3_length = self.map_10bit_binary_to_value_without_index(chromosome,  8, 18, 4*num_bits_per)
-        berdroom3_width = self.map_10bit_binary_to_value_without_index(chromosome, 8, 18, 4*num_bits_per)
-
-        # Define the minimum and maximum areas for each room
-        living_area_min = 120
-        living_area_max = 300
-        kitchen_area_min = 50
-        kitchen_area_max = 120
-        hall_area_min = 19
-        hall_area_max = 72
-        berdroom_area_min = 100
-        berdroom_area_max = 180
-
-        # Calculate the areas for each room
-        living_area = living_length * living_width
-        kitchen_area = kitchen_length * kitchen_width
-        hall_area = 5.5 * hall_width
-        berdroom1_area = berdroom1_length * berdroom1_width
-        berdroom2_area = berdroom2_length * berdroom2_width
-        berdroom3_area = berdroom3_length * berdroom3_width
-
-        # Calculate the total area of the rooms
-        total_area = living_area + 2 * kitchen_area + hall_area + berdroom1_area + berdroom2_area + berdroom3_area
-
-        # Calculate the required space for the doorway between bed2 and bed3
-        doorway_space = 3.0
-        cost = 0.0
-
-        # Calculate the total area including the doorway space
-        total_area_with_doorway = total_area
-
-        # Define the desired proportions for specific rooms
-        living_proportion = 1.5
-        bed1_proportion = 1.5
-        bed2_proportion = 1.5
-        bed3_proportion = 1.5
-
-        # Calculate the proportions of specific rooms
-        living_ratio = living_length / living_width
-        bed1_ratio = berdroom1_length / berdroom1_width
-        bed2_ratio = berdroom2_length / berdroom2_width
-        bed3_ratio = berdroom3_length / berdroom3_width
-
-        # if living_ratio != living_proportion:
-        #     cost = cost + 100
-        # if bed1_ratio != bed1_proportion:
-        #     cost = cost + 100
-        # if bed2_ratio != bed1_proportion:
-        #     cost = cost + 100
-        # if bed3_ratio != bed1_proportion:
-        #     cost = cost + 100
-        #
-        # if living_area < living_area_min:
-        #     cost = cost + 100
-        # if living_area > living_area_max:
-        #     cost = cost + 100
-        # if kitchen_area < kitchen_area_min:
-        #     cost = cost + 100
-        # if kitchen_area > kitchen_area_max:
-        #     cost = cost + 100
-        # if hall_area < hall_area_min:
-        #     cost = cost + 100
-        # if hall_area > hall_area_max:
-        #     cost = cost + 100
-        # if berdroom1_area < berdroom_area_min:
-        #     cost = cost + 100
-        # if berdroom1_area > berdroom_area_max:
-        #     cost = cost + 100
-        # if berdroom2_area < berdroom_area_min:
-        #     cost = cost + 100
-        # if berdroom2_area > berdroom_area_max:
-        #     cost = cost + 100
-        # if berdroom3_area < berdroom_area_min:
-        #     cost = cost + 100
-        # if berdroom3_area > berdroom_area_max:
-        #     cost = cost + 100
-
-        # Calculate penalties based on the difference from desired proportions
-        proportion_penalty = (
-                abs(living_ratio - living_proportion) ** 2 +
-                abs(bed1_ratio - bed1_proportion) ** 2 +
-                abs(bed2_ratio - bed2_proportion) ** 2 +
-                abs(bed3_ratio - bed3_proportion) ** 2
-        )
-
-        # Calculate penalties based on the deviation from desired area ranges
-        area_penalty = (
-                max(0, (living_area - living_area_max) ** 2) +
-                max(0, (kitchen_area - kitchen_area_max) ** 2) +
-                max(0, (hall_area - hall_area_max) ** 2) +
-                max(0, (berdroom1_area - berdroom_area_max) ** 2) +
-                max(0, (berdroom2_area - berdroom_area_max) ** 2) +
-                max(0, (berdroom3_area - berdroom_area_max) ** 2) +
-                max(0, (living_area_min - living_area) ** 2) +
-                max(0, (kitchen_area_min - kitchen_area) ** 2) +
-                max(0, (hall_area_min - hall_area) ** 2) +
-                max(0, (berdroom_area_min - berdroom1_area) ** 2) +
-                max(0, (berdroom_area_min - berdroom2_area) ** 2) +
-                max(0, (berdroom_area_min - berdroom3_area) ** 2)
-        )
-
-        # Calculate the cost based on the total area
-        cost = total_area_with_doorway + 5.5 * 8.5 * 2  # Assuming this is a fixed cost
-
-        # Add proportion and area penalties to the cost
-        cost +=  proportion_penalty + area_penalty
-
-        reward = 1 / (cost + 1)
-
-        return reward
-
     def evaluate(self, chromosome):
         return Options.EVALUATOR(chromosome)
 
-    def function_5(self, chromosome):
-        decodedValues = list()
+    def read_city_coordinates_from_file(self, file_path):
+        city_coordinates = {}
+        in_coordinates_section = False
 
-        partLength = int(len(chromosome) / 9)
+        with open(file_path, 'r') as file:
+            for line in file:
+                line = line.strip()
+                if line.startswith("NODE_COORD_SECTION"):
+                    in_coordinates_section = True
+                    continue
 
-        for i in range(partLength):
-            fromIndex = i * 13
-            toIndex = (i + 1) * 13
-            d_value = self.map_10bit_binary_to_value(chromosome, fromIndex, toIndex, -65.536, 65.536, 13)
-            decodedValues.append(d_value)
+                if in_coordinates_section and line:
+                    parts = line.split()
+                    if len(parts) == 3:
+                        city_name = int(parts[0])  # Assuming city names are numbers
+                        x = float(parts[1])
+                        y = float(parts[2])
+                        city_coordinates[city_name] = (x, y)
+                    else:
+                        break  # Exit the loop if there is an invalid line
 
-        a = [
-            [-32, -16, 0, 16, 32, -32, -16, 0, 16, 32, -32, -16, 0, 16, 32,
-             -32, -16, 0, 16, 32, -32, -16, 0, 16, 32],
-            [-32, -32, -32, -32, -32, -16, -16, -16, -16, -16,
-             16, 16, 16, 16, 16, 32, 32, 32, 32, 32]
-        ]
+        return city_coordinates
+    def tsp_fitness(self, chromosome):
+        # Calculate the total distance of the TSP tour
+        city_coordinates = self.read_city_coordinates_from_file("berlin52.tsp")
 
-        K = 500.0
-        n = 1
-        sum = 1.0 / K
+        global current_city
+        total_distance = 0
+        num_cities = len(city_coordinates)
 
-        for j in range(25):
-            Val = j + 1
-            for i in range(n):
-                Dif = decodedValues[i] - a[i][j]
-                Val += Dif ** 6
-            sum += 1.0 / Val
+        for i in range(num_cities - 1):
+            current_city = chromosome[i]
+            next_city = chromosome[i + 1]
+            x1, y1 = city_coordinates[current_city]
+            x2, y2 = city_coordinates[next_city]
+            distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+            total_distance += distance
 
-        finalSum = 1.0 / sum
-        return 1 / (finalSum + 1)
+        # Add the distance from the last city back to the starting city
+        first_city = chromosome[0]
+        x1, y1 = city_coordinates[current_city]
+        x2, y2 = city_coordinates[first_city]
+        distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+        total_distance += distance
 
-    def quartic(self, chromosome):
-        decodedValues = list()
-
-        partLength = int(len(chromosome) / 9)
-
-        for i in range(partLength):
-            fromIndex = i * 9
-            toIndex = (i + 1) * 9
-            decodedValues.append(self.map_10bit_binary_to_value(chromosome, fromIndex, toIndex, -1.28, 1.28, 9))
-
-        sum = 30
-        n = 1
-
-        for i in range(n):
-            sum += (i + 1) * (decodedValues[i] ** 4)
-
-        Prd = 0.0  # Initialize Prd to 0.0
-
-        for i in range(12):
-            Prd += random.random()  # Add random numbers between 0 and 1
-        Prd -= 6.0  # Adjust Prd to have a mean of 0
-
-        sum += Prd
-
-        # for i in range(len(decodedValues) - 1):
-        #     sum += pow(decodedValues[i], 4) + random.random()
-        return 1 / (sum + 1)
-
-    def step_function(self, chromosome):
-        decodedValues = list()
-
-        partLength = int(len(chromosome) / 10)
-
-        for i in range(partLength):
-            fromIndex = i * 10
-            toIndex = (i + 1) * 10
-            decodedValues.append(self.map_10bit_binary_to_value(chromosome, fromIndex, toIndex, -5.12, 5.12, 10))
-
-        sum = 0
-
-        for i in range(len(decodedValues)):
-            sum += int(decodedValues[i])
-        return 30 / (sum + 30)
-
-    def dejongFunction2(self, chromosome):
-
-        decodedValues = list()
-
-        partLength = int(len(chromosome) / 10)
-
-        for i in range(partLength):
-            fromIndex = i * 10
-            toIndex = (i + 1) * 10
-            decodedValues.append(self.map_10bit_binary_to_value(chromosome, fromIndex, toIndex, -2.048, 2.048, 10))
-        # print(decodedValues)
-
-        sum = 0
-
-        sum += 100 * ((decodedValues[1] - decodedValues[0] ** 2) ** 2) + ((decodedValues[0] - 1) ** 2)
-
-        if sum < 0:
-            print("======================GOING NEGATIVE======================")
-        return 1 / (sum + 1)
-
-    def map_10bit_binary_to_value_without_index(self, chromosome, min_value, max_value, bits):
-        binary_str = ''.join(map(str, chromosome))
-        decimal_value = int(binary_str, 2)
-
-        # Calculate the mapped value using linear scaling
-        # mapped_value = min_value + (decimal_value / ((2**13) - 1)) * (max_value - min_value)
-
-        mapped_value = min_value + decimal_value * ((max_value - min_value) / ((2 ** bits) - 1))
-        return mapped_value
-
-    def map_10bit_binary_to_value(self, chromosome, fromIndex, toIndex, min_value, max_value, bits):
-        binary_str = ''.join(map(str, chromosome[fromIndex:toIndex]))
-        decimal_value = int(binary_str, 2)
-
-        # Calculate the mapped value using linear scaling
-        # mapped_value = min_value + (decimal_value / ((2**13) - 1)) * (max_value - min_value)
-
-        mapped_value = min_value + decimal_value * ((max_value - min_value) / ((2 ** bits) - 1))
-        return mapped_value
-
-    def deJongFunction1(self, chromosome):
-        decodedValues = list()
-
-        partLength = int(len(chromosome) / 10)
-
-        for i in range(partLength):
-            fromIndex = i * 10
-            toIndex = (i + 1) * 10
-            decodedValues.append(self.map_10bit_binary_to_value(chromosome, fromIndex, toIndex, -5.12, 5.12, 10))
-
-        sum = 0
-
-        for value in decodedValues:
-            sum += value * value
-
-        # print("=======", sum)
-        return 1 / (sum + 1)
-
-    def maxOnes(self, chromosome):
-        return sum(chromosome)
+        return 1 / (total_distance + 1)
