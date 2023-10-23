@@ -7,6 +7,7 @@ from Options import Options
 from Population import Population
 import matplotlib.pyplot as plt
 
+
 # Assuming you have a function to read TSP data from a file
 def read_tsp_data(file_name):
     cities = []
@@ -25,6 +26,8 @@ def read_tsp_data(file_name):
                 y = float(parts[2])
                 cities.append((city_id, x, y))
     return cities
+
+
 class GeneticAlgorithm:
 
     def __init__(self):
@@ -32,13 +35,15 @@ class GeneticAlgorithm:
         self.max_fitness = []
         self.min_fitness = []
         self.objective = []
-        self.tsp_data = read_tsp_data("berlin52.tsp")
+        self.max_objective = []
+        self.tsp_data = read_tsp_data(Options.FILE_NAME)
 
     def clear_fitness(self):
         self.average_fitness = []
         self.max_fitness = []
         self.min_fitness = []
         self.objective = []
+        self.max_objective = []
 
     def simple_genetic_algorithm(self):
         # random.seed(Options.RANDOM_SEED)
@@ -54,6 +59,7 @@ class GeneticAlgorithm:
             avg_fitness = sum(fitness_values) / len(fitness_values)
             obj = Options.OBJECTIVE(max_fitness)
             min_f = min(fitness_values)
+            max_obj = Options.OBJECTIVE(min_f)
 
             print(f"Generation {generation}:")
             print(f"Max Fitness: {max_fitness}")
@@ -62,6 +68,7 @@ class GeneticAlgorithm:
             self.max_fitness.append(max_fitness)
             self.objective.append(obj)
             self.min_fitness.append(min_f)
+            self.max_objective.append(max_obj)
 
             for i in range(0, Options.POPULATION_SIZE, 2):
                 parent1 = population.roulette_wheel_selection(fitness_values)
@@ -92,7 +99,7 @@ class GeneticAlgorithm:
         print(best_individual.get_genes())
         ones_count = Evaluator().evaluate(best_individual.get_genes())
         print(f"Number of 1's: {ones_count}")
-        return self.average_fitness, self.max_fitness,self.min_fitness, self.objective
+        return self.average_fitness, self.max_fitness, self.min_fitness, self.objective, self.max_objective
 
     def print_population(self, population):
         print("=====================================")
@@ -127,8 +134,9 @@ class GeneticAlgorithm:
 
             max_fitness = max(fitness_values)
             avg_fitness = sum(fitness_values) / len(fitness_values)
-            obj = Options.OBJECTIVE(max_fitness)
+            obj = Options.OBJECTIVE(avg_fitness)
             min_f = min(fitness_values)
+            max_obj = Options.OBJECTIVE(max_fitness)
 
             print(f"Generation {generation}:")
             print(f"Max Fitness: {max_fitness}")
@@ -137,14 +145,15 @@ class GeneticAlgorithm:
             self.max_fitness.append(max_fitness)
             self.objective.append(obj)
             self.min_fitness.append(min_f)
+            self.max_objective.append(max_obj)
 
-            if prev_avg_fitness is not None and avg_fitness <= prev_avg_fitness:
-                generations_without_improvement += 1
-                if generations_without_improvement >= max_generations_without_improvement:
-                    print(f"Terminating due to lack of improvement for {generations_without_improvement} generations.")
-                    break
-            else:
-                generations_without_improvement = 0
+            # if prev_avg_fitness is not None and avg_fitness <= prev_avg_fitness:
+            #     generations_without_improvement += 1
+            #     if generations_without_improvement >= max_generations_without_improvement:
+            #         print(f"Terminating due to lack of improvement for {generations_without_improvement} generations.")
+            #         break
+            # else:
+            #     generations_without_improvement = 0
 
             prev_avg_fitness = avg_fitness
 
@@ -182,7 +191,7 @@ class GeneticAlgorithm:
         print(f"Objective: {Options.OBJECTIVE(Evaluator().evaluate(best_individual.get_genes()))}")
         result = Evaluator().evaluate(best_individual.get_genes())
         print(f"Best Result: {result}")
-        return self.average_fitness, self.max_fitness,self.min_fitness, self.objective
+        return self.average_fitness, self.max_fitness, self.min_fitness, self.objective, self.max_objective
 
     def initialize_population(self, size):
         population = Population(size)
@@ -196,7 +205,8 @@ class GeneticAlgorithm:
         return population
 
 
-def plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness,runs_and_min_fitness, runs_and_objective, algo_type="SGA",
+def plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
+                    algo_type="SGA",
                     evaluator="deJongFunction1", withObjective=False):
     avg_fitness = [sum(x) / len(x) for x in zip(*runs_and_avg_fitness)]
     max_fitness = [sum(x) / len(x) for x in zip(*runs_and_max_fitness)]
@@ -224,38 +234,125 @@ def plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness,runs_and_min_fitn
     plt.show()
 
 
-if __name__ == "__main__":
-    ga = GeneticAlgorithm()
+def plot_final_runs_objective(runs_avg_objective, runs_max_objective,
+                              algo_type="SGA",
+                              evaluator="deJongFunction1"):
+    avg_obj = [sum(x) / len(x) for x in zip(*runs_avg_objective)]
+    max_obj = [sum(x) / len(x) for x in zip(*runs_max_objective)]
+    plt.xlabel("Generation")
+    plt.plot(avg_obj, label="Average Objective")
+    plt.plot(max_obj, label="Max Objective")
 
+    y_axis = "Objective"
+    plt.ylabel(y_axis)
+    # set title
+    if algo_type == "SGA":
+        plt.title(f"(Simple Genetic Algorithm) for {evaluator}")
+    else:
+        plt.title(f"Average and Max Objective (CHC Genetic Algorithm) for {evaluator}")
+    plt.legend()
+    plt.show()
+
+
+import multiprocessing
+
+multiprocessing.log_to_stderr()
+
+
+def run_genetic_algorithm(run_id, results_queue):
+    try:
+        ga = GeneticAlgorithm()
+        Options.EVALUATOR = Evaluator().tsp_fitness
+        Options.P_MUT = 0.9
+        Options.P_CROSS = 0.9
+        Options.CHROMOSOME_LENGTH = 318
+        Options.OBJECTIVE = Objective.dejongReverse
+        average_fitness, max_fitness, min_fitness, obj, m_obj = ga.chc_genetic_algorithm()
+        results_queue.put((average_fitness, max_fitness, min_fitness, obj, m_obj))
+        print(f"Run {run_id} completed.")
+    except Exception as e:
+        print(f"Error in run_genetic_algorithm: {e}")
+
+
+if __name__ == "__main__":
+    total_runs = Options.TOTAL_RUNS
+
+    # Create a multiprocessing Queue to collect results
+    results_queue = multiprocessing.Queue()
+
+    # Create a list to store process objects
+    processes = []
+
+    # Launch multiple processes to run the genetic algorithm
+    for i in range(total_runs):
+        process = multiprocessing.Process(target=run_genetic_algorithm, args=(i, results_queue))
+        process.start()
+        processes.append(process)
+
+    print("ALL PROCESSES STARTED")
+
+    try:
+        # Wait for all processes to complete
+        for process in processes:
+            process.join(timeout=10)
+    except Exception as e:
+        print(f"Error waiting for processes to complete: {e}")
+
+    print("ALL PROCESSES COMPLETED")
+
+    # Collect results from the Queue
     runs_and_avg_fitness = list()
     runs_and_max_fitness = list()
     runs_and_min_fitness = list()
     runs_and_objective = list()
+    runs_max_objective = list()
 
-    for i in range(Options.TOTAL_RUNS):
-        # random.seed(Options.RANDOM_SEED)
-        Options.EVALUATOR = Evaluator().tsp_fitness
-        Options.P_MUT = 0.9
-        Options.P_CROSS = 0.9
-        Options.CHROMOSOME_LENGTH = 52
-        Options.OBJECTIVE = Objective.dejongReverse
-        average_fitness, max_fitness, min_fitness, obj = ga.chc_genetic_algorithm()
-        runs_and_avg_fitness.append(average_fitness)
-        runs_and_max_fitness.append(max_fitness)
+
+
+    for _ in range(total_runs):
+        avg, max_f, min_f, obj, m_obj = results_queue.get()
+        runs_and_avg_fitness.append(avg)
+        runs_and_max_fitness.append(max_f)
+        runs_and_min_fitness.append(min_f)
         runs_and_objective.append(obj)
-        runs_and_min_fitness.append(min_fitness)
-
-
-    plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
-                    algo_type="CHC",
-                    evaluator="floorPlanning")
+        runs_max_objective.append(m_obj)
 
     plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
                     algo_type="CHC",
-                    evaluator="floorPlanning", withObjective=True)
+                    evaluator="lin318")
 
+    plot_final_runs_objective(runs_and_objective, runs_max_objective, algo_type="CHC", evaluator="lin318")
 
-
-
-
-
+# if __name__ == "__main__":
+#     ga = GeneticAlgorithm()
+#
+#     runs_and_avg_fitness = list()
+#     runs_and_max_fitness = list()
+#     runs_and_min_fitness = list()
+#     runs_and_objective = list()
+#     runs_max_objective = list()
+#
+#     for i in range(Options.TOTAL_RUNS):
+#         # random.seed(Options.RANDOM_SEED)
+#         Options.EVALUATOR = Evaluator().tsp_fitness
+#         Options.P_MUT = 0.9
+#         Options.P_CROSS = 0.9
+#         Options.CHROMOSOME_LENGTH = 52
+#         Options.OBJECTIVE = Objective.dejongReverse
+#         average_fitness, max_fitness, min_fitness, obj, m_obj = ga.chc_genetic_algorithm()
+#         runs_and_avg_fitness.append(average_fitness)
+#         runs_and_max_fitness.append(max_fitness)
+#         runs_and_objective.append(obj)
+#         runs_and_min_fitness.append(min_fitness)
+#         runs_max_objective.append(m_obj)
+#
+#
+#     plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
+#                     algo_type="CHC",
+#                     evaluator="eil76")
+#
+#     # plot_final_runs(runs_and_avg_fitness, runs_and_max_fitness, runs_and_min_fitness, runs_and_objective,
+#     #                 algo_type="CHC",
+#     #                 evaluator="eil76", withObjective=True)
+#
+#     plot_final_runs_objective(runs_and_objective, runs_max_objective, algo_type="CHC", evaluator="eil76")

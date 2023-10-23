@@ -1,6 +1,8 @@
 import math
 import numpy as np
 
+from Options import Options
+
 
 def dejongReverse(x):
     return (1 / x) - 1
@@ -33,7 +35,7 @@ def read_city_coordinates_from_file(file_path):
     return city_coordinates
 def tsp_actual_distance(chromosome):
     # Calculate the total distance of the TSP tour
-    city_coordinates = read_city_coordinates_from_file("berlin52.tsp")
+    city_coordinates = read_city_coordinates_from_file(Options.FILE_NAME)
 
     global current_city
     total_distance = 0

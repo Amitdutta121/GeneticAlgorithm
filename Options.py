@@ -1,12 +1,13 @@
 class Options:
     CHROMOSOME_LENGTH = 51
-    POPULATION_SIZE = 800
-    MAX_GENERATION = 1600
+    POPULATION_SIZE = 200
+    MAX_GENERATION = 400
     P_CROSS = 0.667
     P_MUT = 0.001
     CHC_LAMDA = 2
     RANDOM_SEED = 200
     EVALUATOR = None
-    TOTAL_RUNS = 1
+    TOTAL_RUNS = 10
     OBJECTIVE = None
+    FILE_NAME = "burma14.tsp"
 # 67
