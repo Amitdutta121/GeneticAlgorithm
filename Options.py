@@ -7,6 +7,6 @@ class Options:
     CHC_LAMDA = 2
     RANDOM_SEED = 200
     EVALUATOR = None
-    TOTAL_RUNS = 30
+    TOTAL_RUNS = 1
     OBJECTIVE = None
 # 67
